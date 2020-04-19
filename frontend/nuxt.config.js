@@ -41,7 +41,17 @@ export default {
   ** Nuxt.js modules
   */
   modules: [
+    '@nuxtjs/axios'
   ],
+  axios: {
+    proxy: true
+  },
+  proxy: {
+    '/api/': {
+      target: 'http://localhost:8080',
+      autoRewrite: true
+    }
+  },
   /*
   ** vuetify module configuration
   ** https://github.com/nuxt-community/vuetify-module
@@ -49,7 +59,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: true,
+      dark: false,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -72,5 +82,8 @@ export default {
     */
     extend (config, ctx) {
     }
+  },
+  render: {
+    ssr: false
   }
 }
