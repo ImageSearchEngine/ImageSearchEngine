@@ -1,90 +1,93 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      fixed
-      app
-    >
-      <v-list>
-        <v-list-item
-          v-for="(item, i) in items"
-          :key="i"
-          :to="item.to"
-          router
-          exact
+    <div>
+      <v-app-bar
+        color="#212121"
+        dark
+        v-if="$route.path!='/'"
+      >
+        <img
+          class="DoodleLogo"
+          alt="Doodle Logo"
+          src="/logo.png"
+          style="height:60px;width:132px"
+          @click="$router.push({path:'/'})"
         >
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-app-bar
-      :clipped-left="clipped"
-      fixed
-      app
-    >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-btn
-        icon
-        @click.stop="miniVariant = !miniVariant"
-      >
-        <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title" />
-      <v-spacer />
-      <v-btn
-        icon
-        @click.stop="rightDrawer = !rightDrawer"
-      >
-        <v-icon>mdi-menu</v-icon>
-      </v-btn>
-    </v-app-bar>
-    <v-content>
-      <v-container>
+        <div style="height:100%">
+          <v-text-field
+            class="mx-4"
+            v-model="keyWord"
+            outlined
+            single-lined
+            prepend-inner-icon="mdi-magnify"
+            @keydown.enter="search()"
+          />
+        </div>
+        <v-dialog
+          v-model="dialog"
+          width="40%"
+        >
+          <template v-slot:activator="{ on }">
+
+            <v-btn
+              icon
+              v-on="on"
+            >
+              <v-icon>mdi-filter-outline</v-icon>
+            </v-btn>
+          </template>
+
+          <v-card>
+            <v-card-title primary-title>
+              Filter
+            </v-card-title>
+            <v-container>
+              <v-row>
+                <v-col>
+                  <v-select
+                    class="ma-2"
+                    :items="['Any Size','Large','Medium','Mini']"
+                    label="Image size"
+                    outlined
+                  ></v-select>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <v-color-picker
+                    class="ma-2"
+                    hide-canvas
+                    width="100%"
+                  ></v-color-picker>
+                </v-col>
+              </v-row>
+            </v-container>
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="primary"
+                text
+                @click="dialog = false"
+              >
+                Apply
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-spacer></v-spacer>
+        <v-btn text>
+          About us
+        </v-btn>
+
+      </v-app-bar>
+    </div>
+    <v-content style="height:100%;width:100%">
+      <v-container style="height:100%;width:100%">
         <nuxt />
       </v-container>
     </v-content>
-    <v-navigation-drawer
-      v-model="rightDrawer"
-      :right="right"
-      temporary
-      fixed
-    >
-      <v-list>
-        <v-list-item @click.native="right = !right">
-          <v-list-item-action>
-            <v-icon light>
-              mdi-repeat
-            </v-icon>
-          </v-list-item-action>
-          <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <v-footer
-      :fixed="fixed"
-      app
-    >
-      <span>&copy; {{ new Date().getFullYear() }}</span>
-    </v-footer>
   </v-app>
 </template>
 
@@ -92,25 +95,36 @@
 export default {
   data () {
     return {
-      clipped: false,
-      drawer: false,
-      fixed: false,
-      items: [
-        {
-          icon: 'mdi-apps',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
-        }
-      ],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js'
+      dialog: false,
+      keyWord: ""
+    }
+  },
+  mounted () {
+    if (this.$route.path == "/search/") {
+      this.keyWord = this.$route.query.keyword
+    }
+  },
+  watch: {
+    "$route.path": function (path) {
+      if (this.$route.path == "/search/") {
+        this.keyWord = this.$route.query.keyword
+      }
+    }
+  },
+  methods: {
+    search: function () {
+      if (this.keyWord != "") {
+        this.$router.push({
+          path: "/search/",
+          query: {
+            'keyword': this.keyWord
+          }
+        })
+      } else {
+        this.$router.push({
+          path: "/"
+        })
+      }
     }
   }
 }
