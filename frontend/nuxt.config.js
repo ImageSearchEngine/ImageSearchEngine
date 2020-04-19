@@ -48,7 +48,7 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'http://localhost:8080',
+      target: 'http://localhost:8000',
       autoRewrite: true
     }
   },
