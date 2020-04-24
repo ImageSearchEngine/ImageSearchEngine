@@ -12,7 +12,10 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.9.7",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "vue-stick": "^1.0.7",
+    "vue-waterfall2": "^1.9.6",
+    "vue2-waterfall": "^2.0.3"
   },
   "devDependencies": {
     "@nuxtjs/vuetify": "^1.0.0"

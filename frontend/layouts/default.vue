@@ -83,10 +83,9 @@
 
       </v-app-bar>
     </div>
-    <v-content style="height:100%;width:100%">
-      <v-container style="height:100%;width:100%">
-        <nuxt />
-      </v-container>
+    <v-content style="width:100%">
+
+      <nuxt />
     </v-content>
   </v-app>
 </template>
