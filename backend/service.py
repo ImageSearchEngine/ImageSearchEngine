@@ -14,7 +14,7 @@ def search():
         'page': 0,
         'pagesize': 20,
         'imgURLs': [
-            '1.png',
+            '100000.jpg',
         ]
     }
     return jsonify(ret)
@@ -24,7 +24,7 @@ def relate():
     ret = {
         'maxsize': 20,
         'imgURLs':[
-            '1.png',
+            '100000.jpg',
         ]
     }
     return jsonify(ret)
