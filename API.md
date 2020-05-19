@@ -2,7 +2,7 @@
 
 ## 查询
 
-接口：`/api/search/`
+接口：`/api/search`
 
 方法：`POST`
 
@@ -32,12 +32,9 @@
 }
 ```
 
-
-
 ## 相关
 
-
-接口：`/api/relate/`
+接口：`/api/relate`
 
 方法：`POST`
 
@@ -46,7 +43,7 @@
 ```json
 {
     imgURL:'....1.png',//查询的图片的url
-    maxsize:20,//返回前20个相关图片   
+    maxsize:20,//返回前20个相关图片
 }
 ```
 

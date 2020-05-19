@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.9.7",
+    "clone-deep": "^4.0.1",
     "nuxt": "^2.0.0",
     "vue-stick": "^1.0.7",
     "vue-waterfall2": "^1.9.6",

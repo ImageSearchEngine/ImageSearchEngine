@@ -7,10 +7,11 @@ import json
 
 app = Flask(__name__)
 
+
 @app.route('/api/search', methods=['POST'])
 def search():
     ret = {
-        'total': 1,
+        'total': 87,
         'page': 0,
         'pagesize': 20,
         'imgURLs': [
@@ -19,15 +20,17 @@ def search():
     }
     return jsonify(ret)
 
+
 @app.route('/api/relate', methods=['POST'])
 def relate():
     ret = {
         'maxsize': 20,
-        'imgURLs':[
+        'imgURLs': [
             'http://file.c-4.me/jpg/1.jpg',
         ]
     }
     return jsonify(ret)
+
 
 if __name__ == '__main__':
 

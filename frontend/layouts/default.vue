@@ -40,6 +40,11 @@
           <v-card>
             <v-card-title primary-title>
               Filter
+              <v-spacer />
+              <v-switch
+                v-model="showColorPicker"
+                label="color"
+              ></v-switch>
             </v-card-title>
             <v-container>
               <v-row>
@@ -48,16 +53,18 @@
                     class="ma-2"
                     :items="['Any Size','Large','Medium','Mini']"
                     label="Image size"
+                    v-model="size"
                     outlined
                   ></v-select>
                 </v-col>
               </v-row>
-              <v-row>
+              <v-row v-if="showColorPicker">
                 <v-col>
                   <v-color-picker
                     class="ma-2"
                     hide-canvas
                     width="100%"
+                    v-model="color"
                   ></v-color-picker>
                 </v-col>
               </v-row>
@@ -69,7 +76,7 @@
               <v-btn
                 color="primary"
                 text
-                @click="dialog = false"
+                @click="dialog = false;filter()"
               >
                 Apply
               </v-btn>
@@ -95,35 +102,61 @@ export default {
   data () {
     return {
       dialog: false,
-      keyWord: ""
+      size: "Any Size",
+      color: "",
+      keyWord: "",
+      showColorPicker: false,
     }
   },
   mounted () {
     if (this.$route.path == "/search/") {
-      this.keyWord = this.$route.query.keyword
+      this.keyWord = this.$route.query.keyword ? this.$route.query.keyword : ""
+      this.size = this.$route.query.size ? this.$route.query.size : "Any Size"
+      this.color = this.$route.query.color ? this.$route.query.color : ""
+      if (this.color == "")
+        this.showColorPicker = false
+      else
+        this.showColorPicker = true
     }
   },
   watch: {
     "$route.path": function (path) {
       if (this.$route.path == "/search/") {
-        this.keyWord = this.$route.query.keyword
+        this.keyWord = this.$route.query.keyword ? this.$route.query.keyword : ""
+        this.size = this.$route.query.size ? this.$route.query.size : "Any Size"
+        this.color = this.$route.query.color ? this.$route.query.color : ""
+        if (this.color == "")
+          this.showColorPicker = false
+        else
+          this.showColorPicker = true
       }
     }
   },
   methods: {
+    filter: function () {
+
+      //console.log(this.size, this.color)
+      let queryObj = Object.assign({}, this.$route.query, {
+        size: this.size == 'Any Size' ? null : this.size.toLowerCase(),
+        color: this.showColorPicker ? this.color : null
+      })
+      if (!queryObj.size)
+        delete queryObj.size
+      if (!queryObj.color)
+        delete queryObj.color
+      delete queryObj.page
+      this.$router.push({
+        path: "/search/",
+        query: queryObj
+      })
+    },
     search: function () {
-      if (this.keyWord != "") {
-        this.$router.push({
-          path: "/search/",
-          query: {
-            'keyword': this.keyWord
-          }
-        })
-      } else {
-        this.$router.push({
-          path: "/"
-        })
-      }
+      let queryObj = Object.assign({}, this.$route.query, { 'keyword': this.keyWord })
+      delete queryObj.page
+      this.$router.push({
+        path: "/search/",
+        query: queryObj
+      })
     }
   }
 }
