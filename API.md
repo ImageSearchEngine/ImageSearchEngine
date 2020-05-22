@@ -12,7 +12,7 @@
 {
     color: 'FF00FF', //null表示不约束这一维
     size: 'large', //large small medium null表示不约束
-    keyword: '关键词', //null表示不约束
+    id: '313hn32g2u32g', //图片id，不存在表示不约束
     page: 0, //以上关键词查询下第k页的结果
     pagesize: 20, //每页显示20张图片
 }
