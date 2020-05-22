@@ -14,13 +14,42 @@
           @click="$router.push({path:'/'})"
         >
         <div style="height:100%">
-          <v-text-field
-            class="mx-4"
-            v-model="keyWord"
+          <v-combobox
             outlined
+            class='mx-4'
             single-lined
             prepend-inner-icon="mdi-magnify"
-            @keydown.enter="search()"
+            v-model="imageName"
+            @keydown.prevent="keyDownListener"
+            @focus.prevent="showDialog = imageName? false:true"
+            autocomplete="off"
+            ref="inputBox"
+          >
+            <template v-slot:selection="data">
+              <v-chip
+                pill
+                close
+                @click:close="remove()"
+              >
+                <v-avatar left>
+                  <img :src="imageUrl"></v-avatar>
+                {{ data.item }}
+              </v-chip>
+            </template>
+          </v-combobox>
+          <my-upload
+            field="image"
+            :width="300"
+            :height="300"
+            url="https://httpbin.org/post"
+            :params="params"
+            withCredentials
+            :headers="headers"
+            v-model="showDialog"
+            @crop-success="cropSuccess"
+            @crop-upload-success="cropUploadSuccess"
+            @crop-upload-fail="cropUploadFail"
+            img-format="png"
           />
         </div>
         <v-dialog
@@ -101,38 +130,71 @@
 export default {
   data () {
     return {
+      showDialog: false,
       dialog: false,
       size: "Any Size",
       color: "",
-      keyWord: "",
+      imageName: "",
+      imageUrl: "",
+      imageID: "",
       showColorPicker: false,
+      params: {
+        imageid: '12345678',
+      },
+      headers: {
+      },
     }
   },
   mounted () {
     if (this.$route.path == "/search/") {
-      this.keyWord = this.$route.query.keyword ? this.$route.query.keyword : ""
+      this.init()
+    }
+  },
+  watch: {
+    "$route.path": function (path) {
+      if (this.$route.path == "/search/") {
+        this.init()
+      }
+    }
+  },
+  methods: {
+    keyDownListener (e) {
+      if (e.key == 'Backspace')
+        this.remove()
+      else if (e.key == 'Enter')
+        this.search()
+    },
+    remove () {
+      this.imageName = ''
+      this.imageData = ''
+      this.imageID = ''
+      this.showDialog = false
+      this.$refs.inputBox.blur()
+    },
+    init: function () {
+      if (this.$route.query.id) {
+        this.imageID = this.$route.query.id
+        this.$router.post(`api/xtx/`, {
+          imageid: this.imageID
+        }).then(
+          res => {
+            this.imageName = '搜索图片'
+            this.imageUrl = res.data.imgURL
+          },
+          () => {
+            this.imageName = ''
+            this.imageUrl = ''
+            this.imageID = ''
+          }
+        )
+      }
       this.size = this.$route.query.size ? this.$route.query.size : "Any Size"
       this.color = this.$route.query.color ? this.$route.query.color : ""
       if (this.color == "")
         this.showColorPicker = false
       else
         this.showColorPicker = true
-    }
-  },
-  watch: {
-    "$route.path": function (path) {
-      if (this.$route.path == "/search/") {
-        this.keyWord = this.$route.query.keyword ? this.$route.query.keyword : ""
-        this.size = this.$route.query.size ? this.$route.query.size : "Any Size"
-        this.color = this.$route.query.color ? this.$route.query.color : ""
-        if (this.color == "")
-          this.showColorPicker = false
-        else
-          this.showColorPicker = true
-      }
-    }
-  },
-  methods: {
+    },
     filter: function () {
 
       //console.log(this.size, this.color)
@@ -151,12 +213,44 @@ export default {
       })
     },
     search: function () {
-      let queryObj = Object.assign({}, this.$route.query, { 'keyword': this.keyWord })
+      let queryObj = Object.assign({}, this.$route.query, { 'id': this.imageID })
       delete queryObj.page
       this.$router.push({
         path: "/search/",
         query: queryObj
       })
+    },
+    cropSuccess (imgDataUrl, field) {
+      console.log('-------- crop success --------');
+      this.imageUrl = imgDataUrl;
+      console.log(field)
+    },
+    /**
+     * upload success
+     *
+     * [param] jsonData   服务器返回数据，已进行json转码
+     * [param] field
+     */
+    cropUploadSuccess (jsonData, field) {
+      console.log('-------- upload success --------')
+      this.imageName = '搜索图片'
+      this.imageID = jsonData.form.imageid
+      console.log(jsonData);
+      console.log('field: ' + field);
+    },
+    /**
+     * upload fail
+     *
+     * [param] status    server api return error status, like 500
+     * [param] field
+     */
+    cropUploadFail (status, field) {
+      console.log('-------- upload fail --------');
+      console.log(status);
+      console.log('field: ' + field);
+      this.imageID = ''
+      this.imageUrl = ''
+      this.imageName = ''
     }
   }
 }

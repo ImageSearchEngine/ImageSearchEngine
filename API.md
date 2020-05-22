@@ -58,3 +58,48 @@
     ]
 }
 ```
+
+## 上传图片
+
+接口：`/api/upload`
+
+方法：POST
+
+参数：
+
+```json
+{
+	avatar1:(binary data) 
+}
+```
+
+结果：
+
+```json
+{
+    id: 43h423dfuifds8f //图片对应的id
+}
+```
+
+## 获取并显示图片
+
+接口：`/api/geturl`
+
+方法：POST
+
+参数：
+
+```json
+{
+    id: 43h423dfuifds8f //图片对应的id
+}
+```
+
+返回：
+
+```json
+{
+    imgURL: 'https://www.baidu.com/img/pc_cc75653cd975aea6d4ba1f59b3697455.png'
+}
+```
+
