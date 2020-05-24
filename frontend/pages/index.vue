@@ -37,9 +37,9 @@
         </v-combobox>
         <my-upload
           field="image"
-          :width="300"
-          :height="300"
-          url="https://httpbin.org/post"
+          :width="500"
+          :height="500"
+          url="/api/upload"
           :params="params"
           withCredentials
           :headers="headers"
@@ -68,7 +68,6 @@ export default {
       imageID: "",
       showDialog: false,
       params: {
-        imageid: '12345678',
       },
       headers: {
       },
@@ -102,7 +101,7 @@ export default {
     cropSuccess (imgDataUrl, field) {
       console.log('-------- crop success --------');
       this.imageData = imgDataUrl;
-      console.log(field)
+      console.log('field: ' + field)
     },
     /**
      * upload success
@@ -113,7 +112,7 @@ export default {
     cropUploadSuccess (jsonData, field) {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
-      this.imageID = jsonData.form.imageid
+      this.imageID = jsonData.id
       console.log(jsonData);
       console.log('field: ' + field);
     },

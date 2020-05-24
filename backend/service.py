@@ -5,10 +5,15 @@ from urllib.parse import quote, unquote, urlencode
 import requests
 import json
 import os
-
+import random
+import string
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+
+
+def generateImageName():
+    return ''.join(random.sample(string.ascii_letters + string.digits, 10))+'.png'
 
 
 @app.route('/api/search', methods=['POST'])
@@ -37,12 +42,15 @@ def relate():
 
 @app.route('/api/upload', methods=['POST'])
 def upload():
-    img = request.files.get('avatar1')
-    file_path = f"{basedir}/static/photo/{img.filename}"
+    img = request.files.get('image')
+    # app.logger.info(request.files)
+    imgName = generateImageName()
+    file_path = f"{basedir}/static/imgs/{imgName}"
     img.save(file_path)
     ret = {
-        'id': '43h423dfuifds8f'
+        'id': imgName[:-4]
     }
+    app.logger.info(f"upload image :{imgName}")
     return jsonify(ret)
 
 
@@ -51,11 +59,14 @@ def geturl():
     ret = {
         'imgURL': 'http://file.c-4.me/jpg/1.jpg',
     }
+    app.logger.info(f"get urls")
     return jsonify(ret)
 
 
 if __name__ == '__main__':
 
+    if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
+        os.makedirs(os.path.join(basedir, 'static', 'imgs'))
     # development
     app.run(host='0.0.0.0', port=8388, debug=True)
 

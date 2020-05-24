@@ -77,79 +77,28 @@ export default {
     Waterfall: Waterfall,
     WaterfallItem: WaterfallItem
   },
-  asyncData (context) {
-    let queryObj = Object.assign({ page: 0, pagesize: 20 }, context.query)
-    console.log("query backend!")
-    console.log(queryObj)
-    return context.app.$axios.post('/api/search', queryObj).then(
-      res => {
-        let data = res.data
-        /*
-          {
-              total: 119, //总共找到119条结果
-              page: 0, //这是第0页的结果列表
-              pagesize: 20, //每页返回20个
-              imgURLs:[
-                  '.....1.png',
-                  '.....2.png',
-              ]
-          }
-        */
-        return {
-          totalPage: Math.floor(data.total / data.pagesize) + 1,
-          page: context.query.page ? parseInt(context.query.page) + 1 : 1,
-          imgURLs: data.imgURLs
-        }
-      },
-      () => {
-        context.error({
-          statusCode: 404,
-          message: "参数存在问题"
-        })
-      }
-    )
-  },
   data () {
     return {
       page: 1,
       focusImgURL: "",
       dialog: false,
       imgURLs: [],
-      relateImgURLs: []
+      relateImgURLs: [],
+      totalPage: 1,
     }
   },
   mounted () {
-    console.log(this.$route.path)
+    this.init()
   },
   watch: {
     "$route.query": function (newQuery) {
-      let queryObj = Object.assign({}, newQuery)
-      console.log(queryObj)
-      this.$axios.post('/api/search', queryObj).then(
-        res => {
-          let data = res.data
-          /*
-            {
-                total: 119, //总共找到119条结果
-                page: 0, //这是第0页的结果列表
-                pagesize: 20, //每页返回20个
-                imgURLs:[
-                    '.....1.png',
-                    '.....2.png',
-                ]
-            }
-          */
-          this.totalPage = Math.floor(data.total / data.pagesize) + 1
-          this.page = this.$route.query.page ? parseInt(this.$route.query.page) + 1 : 1
-          this.imgURLs = data.imgURLs
-        },
-        () => {
-        }
-      )
+      this.init()
     },
     "page": function (newPage) {
       //console.log(this.$route.query)
       let queryObj = Object.assign({}, this.$route.query, { page: newPage - 1 })
+      if (newPage == 1)
+        delete queryObj.page
       this.$router.push({
         path: "/search/",
         query: queryObj
@@ -170,6 +119,26 @@ export default {
         }
       )
       //console.log(this.focusImgURL)
+    }
+  },
+  methods: {
+    init: function () {
+      let queryObj = Object.assign({ page: 0, pagesize: 20 }, this.$route.query)
+      this.$axios.post('/api/search', queryObj).then(
+        res => {
+          let data = res.data
+
+          this.totalPage = Math.floor(data.total / data.pagesize) + 1,
+            this.page = queryObj.page ? parseInt(queryObj.page) + 1 : 1,
+            this.imgURLs = data.imgURLs
+        },
+        () => {
+          context.error({
+            statusCode: 404,
+            message: "参数存在问题"
+          })
+        }
+      )
     }
   }
 }

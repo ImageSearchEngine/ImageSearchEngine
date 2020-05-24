@@ -4,7 +4,7 @@
       <v-app-bar
         color="#212121"
         dark
-        v-if="$route.path!='/'"
+        v-if="$route.path=='/search/' || $route.path=='/search'"
       >
         <img
           class="DoodleLogo"
@@ -37,20 +37,6 @@
               </v-chip>
             </template>
           </v-combobox>
-          <my-upload
-            field="image"
-            :width="300"
-            :height="300"
-            url="https://httpbin.org/post"
-            :params="params"
-            withCredentials
-            :headers="headers"
-            v-model="showDialog"
-            @crop-success="cropSuccess"
-            @crop-upload-success="cropUploadSuccess"
-            @crop-upload-fail="cropUploadFail"
-            img-format="png"
-          />
         </div>
         <v-dialog
           v-model="dialog"
@@ -80,7 +66,7 @@
                 <v-col>
                   <v-select
                     class="ma-2"
-                    :items="['Any Size','Large','Medium','Mini']"
+                    :items="['any','large','medium','mini']"
                     label="Image size"
                     v-model="size"
                     outlined
@@ -113,7 +99,10 @@
           </v-card>
         </v-dialog>
         <v-spacer></v-spacer>
-        <v-btn text>
+        <v-btn
+          text
+          to='/aboutus/'
+        >
           About us
         </v-btn>
 
@@ -122,24 +111,42 @@
     <v-content style="width:100%">
 
       <nuxt />
+      <my-upload
+        field="image"
+        :width="500"
+        :height="500"
+        url="/api/upload"
+        :params="params"
+        withCredentials
+        :headers="headers"
+        v-model="showDialog"
+        @crop-success="cropSuccess"
+        @crop-upload-success="cropUploadSuccess"
+        @crop-upload-fail="cropUploadFail"
+        img-format="png"
+      />
     </v-content>
   </v-app>
 </template>
 
 <script>
+import myUpload from 'vue-image-crop-upload'
+
 export default {
+  components: {
+    "my-upload": myUpload,
+  },
   data () {
     return {
       showDialog: false,
       dialog: false,
-      size: "Any Size",
+      size: "any",
       color: "",
       imageName: "",
       imageUrl: "",
       imageID: "",
       showColorPicker: false,
       params: {
-        imageid: '12345678',
       },
       headers: {
       },
@@ -155,6 +162,11 @@ export default {
       if (this.$route.path == "/search/") {
         this.init()
       }
+    },
+    "$route.query": function (path) {
+      if (this.$route.path == "/search/") {
+        this.init()
+      }
     }
   },
   methods: {
@@ -166,7 +178,7 @@ export default {
     },
     remove () {
       this.imageName = ''
-      this.imageData = ''
+      this.imageUrl = ''
       this.imageID = ''
       this.showDialog = false
       this.$refs.inputBox.blur()
@@ -174,8 +186,8 @@ export default {
     init: function () {
       if (this.$route.query.id) {
         this.imageID = this.$route.query.id
-        this.$router.post(`api/xtx/`, {
-          imageid: this.imageID
+        this.$axios.post(`/api/geturl`, {
+          id: this.imageID
         }).then(
           res => {
             this.imageName = '搜索图片'
@@ -185,10 +197,14 @@ export default {
             this.imageName = ''
             this.imageUrl = ''
             this.imageID = ''
+            this.$router.push({
+              path: "/"
+            })
           }
         )
       }
-      this.size = this.$route.query.size ? this.$route.query.size : "Any Size"
+      console.log(this.$route.query)
+      this.size = this.$route.query.size ? this.$route.query.size : "any"
       this.color = this.$route.query.color ? this.$route.query.color : ""
       if (this.color == "")
         this.showColorPicker = false
@@ -199,7 +215,7 @@ export default {
 
       //console.log(this.size, this.color)
       let queryObj = Object.assign({}, this.$route.query, {
-        size: this.size == 'Any Size' ? null : this.size.toLowerCase(),
+        size: this.size == 'any' ? null : this.size,
         color: this.showColorPicker ? this.color : null
       })
       if (!queryObj.size)
@@ -207,6 +223,7 @@ export default {
       if (!queryObj.color)
         delete queryObj.color
       delete queryObj.page
+      console.log('filter', queryObj)
       this.$router.push({
         path: "/search/",
         query: queryObj
@@ -234,7 +251,7 @@ export default {
     cropUploadSuccess (jsonData, field) {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
-      this.imageID = jsonData.form.imageid
+      this.imageID = jsonData.id
       console.log(jsonData);
       console.log('field: ' + field);
     },
