@@ -90,3 +90,5 @@ sw.*
 *.swp
 
 __pycache__
+
+backend/static/imgs
