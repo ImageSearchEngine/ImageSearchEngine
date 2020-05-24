@@ -4,6 +4,9 @@ from flask import Flask, request, Response, jsonify
 from urllib.parse import quote, unquote, urlencode
 import requests
 import json
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 
@@ -28,6 +31,25 @@ def relate():
         'imgURLs': [
             'http://file.c-4.me/jpg/1.jpg',
         ]
+    }
+    return jsonify(ret)
+
+
+@app.route('/api/upload', methods=['POST'])
+def upload():
+    img = request.files.get('avatar1')
+    file_path = f"{basedir}/static/photo/{img.filename}"
+    img.save(file_path)
+    ret = {
+        'id': '43h423dfuifds8f'
+    }
+    return jsonify(ret)
+
+
+@app.route('/api/geturl', methods=['POST'])
+def geturl():
+    ret = {
+        'imgURL': 'http://file.c-4.me/jpg/1.jpg',
     }
     return jsonify(ret)
 
