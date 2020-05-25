@@ -7,13 +7,13 @@
 import torch
 from torch import nn
 import torch.utils.checkpoint
-import multigrain
+from cbirCore import multigrain
 from torchvision.models import resnet18, resnet50, resnet101, resnet152
 from pretrainedmodels.models import senet154
 from .pnasnet import pnasnet5large
 from .nasnet_mobile import nasnetamobile
 from collections import OrderedDict as OD
-from multigrain.modules.layers import Layer
+from cbirCore.multigrain.modules.layers import Layer
 # torch.utils.checkpoint.preserve_rng_state=False
 
 

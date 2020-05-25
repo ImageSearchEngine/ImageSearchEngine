@@ -8,7 +8,7 @@ import torch
 import torchvision.transforms.functional as F
 from torchvision import transforms
 
-from multigrain.datasets import IN1K
+from cbirCore.multigrain.datasets import IN1K
 from .autoaugment import ImageNetPolicy
 
 

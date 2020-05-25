@@ -7,6 +7,8 @@ import json
 import os
 import random
 import string
+from cbirCore.cbirSystem import CBIRSystem
+from cbirCore.image import Image
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
@@ -18,6 +20,9 @@ def generateImageName():
 
 @app.route('/api/search', methods=['POST'])
 def search():
+    data = request.get_json()
+    print(data)
+    # app.logger.info(color)
     ret = {
         'total': 87,
         'page': 0,

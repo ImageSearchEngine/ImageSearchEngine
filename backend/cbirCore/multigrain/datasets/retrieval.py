@@ -11,7 +11,7 @@ import os.path as osp
 from .loader import loader
 from collections import OrderedDict as OD
 from torchvision.datasets.utils import download_url
-from multigrain.utils.misc import ifmakedirs
+from cbirCore.multigrain.utils.misc import ifmakedirs
 import zipfile
 import tarfile
 import yaml
@@ -170,8 +170,10 @@ class CopyDays(DownloadableDataset):
         self.root = root
         self.download()
 
-        self.distractors = distractors
-        self.num_distractors = num_distractors
+        # self.distractors = distractors
+        # self.num_distractors = num_distractors
+        self.distractors = None
+        self.num_distractors = None
         self.subset = subset
 
         avail = OD()

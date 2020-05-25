@@ -17,7 +17,7 @@ import os
 from os import path as osp
 import numpy as np
 from .loader import loader as default_loader
-from multigrain.utils import ifmakedirs
+from cbirCore.multigrain.utils import ifmakedirs
 
 
 class IN1K(data.Dataset):

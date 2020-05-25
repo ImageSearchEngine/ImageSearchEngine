@@ -1,6 +1,6 @@
-from backend.cbirCore.multigrain.lib import get_multigrain
-from backend.cbirCore.multigrain.utils import cuda
-from backend.cbirCore.multigrain.augmentations import get_transforms
+from cbirCore.multigrain.lib import get_multigrain
+from cbirCore.multigrain.utils import cuda
+from cbirCore.multigrain.augmentations import get_transforms
 import torch
 import numpy as np
 

@@ -6,10 +6,10 @@
 #
 import torch
 from torch import nn
-from multigrain.backbones import BackBone
+from cbirCore.multigrain.backbones import BackBone
 import torch.utils.model_zoo as model_zoo
-from multigrain.modules.layers import Layer, Select
-from multigrain.modules import DistanceWeightedSampling
+from cbirCore.multigrain.modules.layers import Layer, Select
+from cbirCore.multigrain.modules import DistanceWeightedSampling
 from collections import OrderedDict as OD
 
 
