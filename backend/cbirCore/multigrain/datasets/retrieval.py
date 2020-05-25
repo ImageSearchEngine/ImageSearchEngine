@@ -221,7 +221,7 @@ class CopyDays(DownloadableDataset):
 
     def gen_distractors(self):
         self.distractor_list = []  # glob(distractors)
-        for dirpath, subdirs, files in os.walk(self.distractors):
+        for dirpath, _, files in os.walk(self.distractors):
             for x in files:
                 if x.endswith('.jpg'):
                     self.distractor_list.append(osp.join(dirpath, x))
