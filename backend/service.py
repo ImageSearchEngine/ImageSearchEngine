@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 from flask import Flask, request, Response, jsonify
+from flask.logging import create_logger
 from urllib.parse import quote, unquote, urlencode
 import requests
 import json
@@ -12,6 +13,7 @@ from cbirCore.image import Image
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
+log = create_logger(app)
 
 
 def generateImageName():
@@ -22,7 +24,7 @@ def generateImageName():
 def search():
     data = request.get_json()
     print(data)
-    # app.logger.info(color)
+    # log.info(color)
     ret = {
         'total': 87,
         'page': 0,
@@ -48,14 +50,14 @@ def relate():
 @app.route('/api/upload', methods=['POST'])
 def upload():
     img = request.files.get('image')
-    # app.logger.info(request.files)
+    # log.info(request.files)
     imgName = generateImageName()
     file_path = f"{basedir}/static/imgs/{imgName}"
     img.save(file_path)
     ret = {
         'id': imgName[:-4]
     }
-    app.logger.info(f"upload image :{imgName}")
+    log.info(f"upload image :{imgName}")
     return jsonify(ret)
 
 
@@ -64,7 +66,7 @@ def geturl():
     ret = {
         'imgURL': 'http://file.c-4.me/jpg/1.jpg',
     }
-    app.logger.info(f"get urls")
+    log.info(f"get urls")
     return jsonify(ret)
 
 
