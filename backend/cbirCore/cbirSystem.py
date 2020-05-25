@@ -3,6 +3,7 @@ from cbirCore.multigrain.utils import cuda
 from cbirCore.multigrain.augmentations import get_transforms
 import torch
 import numpy as np
+import gc
 
 
 class CBIRSystem:
@@ -14,7 +15,7 @@ class CBIRSystem:
         self.model.eval()
         self.transform = get_transforms(crop=False, need=(
             'val'), backbone='pnasnet5large')['val']
-        self.datasets = None
+        self.datasets = []
         self.ckpt_loaded = self.dataset_loaded = False
 
     def load_checkpoint(self, ckpt_dir):
@@ -27,6 +28,26 @@ class CBIRSystem:
         checkpoint = torch.load(ckpt_dir)
         self.model.load_state_dict(checkpoint['model_state'])
         self.ckpt_loaded = True
+
+    def load_image(self, image):
+        """
+        load_image:
+            加载到检索系统中一张图片，使用检索系统之前请多次调用
+        image: class Image
+            加载进检索系统中的图片，要求是Image类的派生类，注意系统直接image引用上更改
+        """
+        img = self.transform(image.PILObj)
+        img = torch.unsqueeze(img, dim=0)
+        if torch.cuda.is_available():
+            img = cuda(img)
+        with torch.no_grad():
+            output_dict = self.model(img)
+        feature = output_dict['normalized_embedding'].detach().cpu().numpy()[0]
+        image.feature = feature
+        del image.PILObj  # 释放图片占用的内存
+        gc.collect()
+        self.dataset.append(image)
+        self.dataset_loaded = True
 
     def load_dataset(self, images):
         """
