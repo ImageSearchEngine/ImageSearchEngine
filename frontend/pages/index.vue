@@ -55,6 +55,7 @@
 <script>
 import Logo from '~/components/Logo.vue'
 import myUpload from 'vue-image-crop-upload'
+const backendAddr = 'http://imgse.c-4.me:8388'
 export default {
   components: {
     Logo,
@@ -65,7 +66,8 @@ export default {
       imageName: "",
       imageID: "",
       showDialog: false,
-      imageUrl: ''
+      imageUrl: '',
+      backend: backendAddr
     }
   },
   methods: {
@@ -106,7 +108,7 @@ export default {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
       this.imageID = jsonData.id
-      this.imageUrl = `${this.backend}/upload/${this.imageID}`
+      this.imageUrl = `${backendAddr}/upload/${this.imageID}?s=100y100`
     },
     /**
      * upload fail

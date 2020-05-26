@@ -116,9 +116,7 @@
         :width="500"
         :height="500"
         url="/api/upload"
-        :params="params"
         withCredentials
-        :headers="headers"
         v-model="showDialog"
         @crop-success="cropSuccess"
         @crop-upload-success="cropUploadSuccess"
@@ -131,7 +129,7 @@
 
 <script>
 import myUpload from 'vue-image-crop-upload'
-
+const backendAddr = 'http://imgse.c-4.me:8388'
 export default {
   components: {
     "my-upload": myUpload,
@@ -146,10 +144,7 @@ export default {
       imageUrl: "",
       imageID: "",
       showColorPicker: false,
-      params: {
-      },
-      headers: {
-      },
+      backend: backendAddr
     }
   },
   mounted () {
@@ -187,7 +182,7 @@ export default {
       if (this.$route.query.id) {
         this.imageID = this.$route.query.id
         this.imageName = '搜索图片'
-        this.imageUrl = `${this.backend}/upload/${this.imageID}`
+        this.imageUrl = `${backendAddr}/upload/${this.imageID}?s=100y100`
       }
       console.log(this.$route.query)
       this.size = this.$route.query.size ? this.$route.query.size : "any"
@@ -237,7 +232,7 @@ export default {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
       this.imageID = jsonData.id
-      this.imageUrl = `${this.backend}/upload/${this.imageID}`
+      this.imageUrl = `${backendAddr}/upload/${this.imageID}?s=100y100`
     },
     /**
      * upload fail

@@ -17,7 +17,7 @@
           >
             <template v-slot:activator="{ on }">
               <v-img
-                :src="`${backend}/img/${imgIDs[(nn-1)+(n-1)*4]}`"
+                :src="`${backend}/img/${imgIDs[(nn-1)+(n-1)*4]}?s=300y300`"
                 height="200px"
                 class="touchable"
                 @click="focusImgID=imgIDs[(nn-1)+(n-1)*4]"
@@ -26,7 +26,7 @@
             </template>
             <v-card>
               <v-img
-                :src="`${backend}/img/${imgIDs[(nn-1)+(n-1)*4]}`"
+                :src="`${backend}/img/${focusImgID}?s=500y500`"
                 width=100%
               ></v-img>
               <v-card-title class="ma-2">
@@ -37,7 +37,7 @@
                   v-for="(imgID,idx) in relateImgIDs"
                   :key="idx"
                 >
-                  <v-img :src="`${backend}/img/${imgID}`"></v-img>
+                  <v-img :src="`${backend}/img/${imgID}?s=300y300`"></v-img>
                 </WaterfallItem>
               </Waterfall>
             </v-card>
@@ -69,9 +69,10 @@
   </div>
 </template>
 <script>
-const Waterfall = require("vue2-waterfall").Waterfall;
-const WaterfallItem = require("vue2-waterfall").WaterfallItem;
-const clone = require('clone-deep');
+const Waterfall = require("vue2-waterfall").Waterfall
+const WaterfallItem = require("vue2-waterfall").WaterfallItem
+const clone = require('clone-deep')
+const backendAddr = 'http://imgse.c-4.me:8388'
 export default {
   components: {
     Waterfall: Waterfall,
@@ -85,6 +86,7 @@ export default {
       imgIDs: [],
       relateImgIDs: [],
       totalPage: 1,
+      backend: backendAddr
     }
   },
   mounted () {
@@ -109,7 +111,7 @@ export default {
       this.relateImgIDs = []
       this.$axios.post('/api/relate', {
         img: this.focusImgID,
-        num: 40,
+        num: 20,
       }).then(
         res => {
           let data = res.data
