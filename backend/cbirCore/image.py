@@ -9,9 +9,12 @@ class Image:
         使用PIL库打开图像的对象类型
     feature:
         图像检索系统计算出的图像的特征向量
+    ID:
+        图片对应的ID
     """
 
-    def __init__(self, image_dir=None):
+    def __init__(self, ID=None, image_dir=None):
+        self.ID = ID
         self.PILObj = None if image_dir == None else open(image_dir)
         self.feature = None
 

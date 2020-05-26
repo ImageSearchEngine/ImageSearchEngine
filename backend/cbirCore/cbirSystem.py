@@ -49,25 +49,25 @@ class CBIRSystem:
         self.dataset.append(image)
         self.dataset_loaded = True
 
-    def load_dataset(self, images):
-        """
-        load_dataset:
-            加载检索的图片库，在使用检索系统之前一定要调用
-        images: list of class Image
-            检索的所有图片，列表中的每一项都是Image类的派生类
-        """
-        self.dataset = images
-        for image in self.dataset:
-            img = self.transform(image.PILObj)
-            img = torch.unsqueeze(img, dim=0)
-            if torch.cuda.is_available():
-                img = cuda(img)
-            with torch.no_grad():
-                output_dict = self.model(img)
-            feature = output_dict['normalized_embedding'].detach().cpu().numpy()[
-                0]
-            image.feature = feature
-        self.dataset_loaded = True
+    # def load_data(self, data_dir):
+    #     """
+    #     load_data:
+    #         加载预处理好的数据，不用使用load_image了
+    #     images: list of class Image
+    #         检索的所有图片，列表中的每一项都是Image类的派生类
+    #     """
+    #     self.dataset = images
+    #     for image in self.dataset:
+    #         img = self.transform(image.PILObj)
+    #         img = torch.unsqueeze(img, dim=0)
+    #         if torch.cuda.is_available():
+    #             img = cuda(img)
+    #         with torch.no_grad():
+    #             output_dict = self.model(img)
+    #         feature = output_dict['normalized_embedding'].detach().cpu().numpy()[
+    #             0]
+    #         image.feature = feature
+    #     self.dataset_loaded = True
 
     def _loss(self, x1, x2):
         return np.linalg.norm(x1-x2, 2)
