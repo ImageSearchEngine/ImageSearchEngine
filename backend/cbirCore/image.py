@@ -15,7 +15,12 @@ class Image:
 
     def __init__(self, image_dir=None, ID=None):
         self.ID = ID
-        self.PILObj = None if image_dir == None else open(image_dir)
+        if image_dir == None:
+            self.PILObj = None
+        else:
+            self.PILObj = open(image_dir)
+            if self.PILObj.mode == 'RGBA':
+                self.PILObj = self.PILObj.convert('RGB')
         self.feature = None
 
     def open(self, image_dir):
@@ -26,3 +31,5 @@ class Image:
             图像的路径
         """
         self.PILObj = open(image_dir)
+        if self.PILObj.mode == 'RGBA':
+            self.PILObj = self.PILObj.convert('RGB')

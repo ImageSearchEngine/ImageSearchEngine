@@ -48,7 +48,7 @@ def search():
         'total': len(retImg),
         'page': page,
         'num': min(num, len(retImg)-page*num),
-        'imgs': retImg[page*num: min((page+1)*num, len(retImg))]
+        'imgs': [x.ID for x in retImg[page*num: min((page+1)*num, len(retImg))]]
     }
     return jsonify(ret)
 
@@ -146,9 +146,8 @@ def init():
 
 
 def coreInit():
-    for filename in imgs[:10]:
-        print(f"core load image: {filename}")
-        core.load_image(CBIRImage(os.path.join(basedir, 'static', 'imgs', filename), filename))
+    core.load_checkpoint('static/pnasnet5large-finetune500.pth')
+    core.load_data('static/')
     print(f"core init completed")
 
 
