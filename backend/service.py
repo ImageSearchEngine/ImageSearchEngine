@@ -77,9 +77,9 @@ def upload():
     return jsonify(ret)
 
 
-@app.route('/img/<string:filename>', methods=['GET'])
-def getImg(filename):
-    path = os.path.join(basedir, 'static', 'imgs', filename) 
+@app.route('/thumbnail/<string:filename>', methods=['GET'])
+def getThumbnail(filename):
+    path = os.path.join(basedir, 'static', 'imgs', 'small', filename) 
     if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
         return abort(404)
     else:
@@ -90,6 +90,22 @@ def getImg(filename):
         response = make_response(img)
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
         return response
+
+
+@app.route('/img/<string:filename>', methods=['GET'])
+def getImg(filename):
+    path = os.path.join(basedir, 'static', 'imgs', 'origin', filename) 
+    if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
+        return abort(404)
+    else:
+        try:
+            img = open(path, "rb").read()
+        except IOError:
+            return abort(404)
+        response = make_response(img)
+        response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
+        return response
+
 
 @app.route('/upload/<string:filename>', methods=['GET'])
 def getUpload(filename):
@@ -106,24 +122,33 @@ def getUpload(filename):
         return response
 
 
-def init():
-    if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
-        os.makedirs(os.path.join(basedir, 'static', 'imgs'))
+def dirInit():
+    if not os.path.exists(os.path.join(basedir, 'static', 'imgs', 'origin')):
+        os.makedirs(os.path.join(basedir, 'static', 'imgs', 'origin'))
+    if not os.path.exists(os.path.join(basedir, 'static', 'imgs', 'small')):
+        os.makedirs(os.path.join(basedir, 'static', 'imgs', 'small'))
     if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
         os.makedirs(os.path.join(basedir, 'static', 'uploads'))
+    print(f"dir init completed")
+
+
+def init():
     global imgs
-    imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
+    imgs = os.listdir(os.path.join(basedir, 'static', 'imgs', 'origin'))
     print(f"init completed")
 
 
 def coreInit():
     # for filename in imgs:
     #     print(f"core load image: {filename}")
-    #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
+    #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', 'origin', filename)))
     print(f"core init completed")
 
 
 if __name__ == '__main__':
+
+    # the first run
+    # dirInit()
 
     init()
 

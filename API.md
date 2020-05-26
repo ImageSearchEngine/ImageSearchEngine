@@ -87,6 +87,12 @@
 }
 ```
 
+## 获取并显示缩略图
+
+接口：`/thumbnail/<imgID>`
+
+方法：GET
+
 ## 获取并显示图片
 
 接口：`/img/<imgID>` 和 `/upload/<imgID>`
