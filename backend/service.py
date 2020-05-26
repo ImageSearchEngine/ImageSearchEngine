@@ -17,7 +17,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config.from_object(config)
 # core = CBIRSystem()
-imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
+imgs = []
 
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg'])
@@ -111,20 +111,28 @@ def init():
         os.makedirs(os.path.join(basedir, 'static', 'imgs'))
     if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
         os.makedirs(os.path.join(basedir, 'static', 'uploads'))
+    global imgs
+    imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
+    print(f"init completed")
+
+
+def coreInit():
     # for filename in imgs:
     #     print(f"core load image: {filename}")
     #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
-    print(f"init completed")
+    print(f"core init completed")
 
 
 if __name__ == '__main__':
 
+    init()
+
     # development
     if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
-        init()
+        coreInit()
     app.run(host='0.0.0.0', port=8388, debug=True)
 
     # production
     # from waitress import serve
-    # init()
+    # coreInit()
     # serve(app, host="0.0.0.0", port=8388)
