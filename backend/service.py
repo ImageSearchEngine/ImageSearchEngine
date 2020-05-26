@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, Response, jsonify, current_app, make_response, abort
 from flask.logging import create_logger
 from urllib.parse import quote, unquote, urlencode
 import requests
@@ -10,39 +10,60 @@ import random
 import string
 from cbirCore.cbirSystem import CBIRSystem
 from cbirCore.image import Image
+import config
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
-log = create_logger(app)
+app.config.from_object(config)
+core = CBIRSystem()
+imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
 
+
+ALLOWED_EXTENSIONS = set(['png', 'jpg'])
+ 
+def allowedImageExt(imgName):
+    return '.' in imgName and imgName.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def generateImageName():
-    return ''.join(random.sample(string.ascii_letters + string.digits, 10))+'.png'
+    return ''.join(random.sample(string.ascii_letters + string.digits, 10))
 
 
 @app.route('/api/search', methods=['POST'])
 def search():
     data = request.get_json()
-    print(data)
-    # log.info(color)
+    if data.page == None:
+        return jsonify({'code': '1', 'msg': 'page is None'})
+    if data.pagesize == None:
+        data.pagesize = app.config['DEFAULT_PAGESIZE']
     ret = {
-        'total': 87,
-        'page': 0,
-        'pagesize': 20,
-        'imgURLs': [
-            'http://file.c-4.me/jpg/1.jpg',
-        ]
+        'code': '0',
+        'msg': '',
+        'total': len(imgs),
+        'page': data.page,
+        'pagesize': data.pagesize,
+        'imgURLs': [f'{app.config["URL"]}/imgs/{x}' for x in imgs[data.page * data.pagesize: min((data.page+1) * data.pagesize, len(imgs))]]
     }
     return jsonify(ret)
 
 
 @app.route('/api/relate', methods=['POST'])
 def relate():
+    data = request.get_json()
+    if data.maxsize == None:
+        data.maxsize = app.config['DEFAULT_PAGESIZE']
     ret = {
         'maxsize': 20,
         'imgURLs': [
-            'http://file.c-4.me/jpg/1.jpg',
+            'http://ise.c-4.me/imgs/1.jpg',
         ]
+    }
+    ret = {
+        'code': '0',
+        'msg': '',
+        'total': len(imgs),
+        'page': data.page,
+        'pagesize': data.pagesize,
+        'imgURLs': [f'{app.config["URL"]}/imgs/{x}' for x in imgs[data.page * data.pagesize: min((data.page+1) * data.pagesize, len(imgs))]]
     }
     return jsonify(ret)
 
@@ -50,33 +71,68 @@ def relate():
 @app.route('/api/upload', methods=['POST'])
 def upload():
     img = request.files.get('image')
-    # log.info(request.files)
+    if img == None:
+        return jsonify({'code': '1', 'msg': 'image is None'})
+    if allowedImageExt(img.filename) == False:
+        return jsonify({'code': '2', 'msg': 'image extension is not allowed'})
     imgName = generateImageName()
-    file_path = f"{basedir}/static/imgs/{imgName}"
-    img.save(file_path)
+    filePath = os.path.join(basedir, 'static', 'uploads', imgName)
+    img.save(filePath)
+    current_app.logger.info(f"upload image: {imgName}")
     ret = {
-        'id': imgName[:-4]
+        'code': '0',
+        'msg': '',
+        'id': imgName
     }
-    log.info(f"upload image :{imgName}")
     return jsonify(ret)
 
 
-@app.route('/api/geturl', methods=['POST'])
-def geturl():
-    ret = {
-        'imgURL': 'http://file.c-4.me/jpg/1.jpg',
-    }
-    log.info(f"get urls")
-    return jsonify(ret)
+@app.route('/img/<string:filename>', methods=['GET']) # TODO fangyu
+def getImg(filename):
+    filedir = os.path.join(basedir, 'static', 'imgs')
+    if request.method == 'GET':
+        if filename is None:
+            return abort(404)
+        else:
+            img = open(os.path.join(filedir, filename), "rb").read()
+            response = make_response(img)
+            response.headers['Content-Type'] = 'image/png'
+            return response
+    else:
+        abort(404)
+
+@app.route('/upload/<string:filename>', methods=['GET']) # TODO fangyu
+def getUpload(filename):
+    filedir = os.path.join(basedir, 'static', 'uploads')
+    if request.method == 'GET':
+        if filename is None:
+            return abort(404)
+        else:
+            img = open(os.path.join(filedir, filename), "rb").read()
+            response = make_response(img)
+            response.headers['Content-Type'] = 'image/png'
+            return response
+    else:
+        abort(404)
+
+
+def init():
+    if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
+        os.makedirs(os.path.join(basedir, 'static', 'uploads'))
+    for filename in imgs:
+        print(f"core load image: {filename}")
+        core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
+    print(f"init completed")
 
 
 if __name__ == '__main__':
 
-    if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
-        os.makedirs(os.path.join(basedir, 'static', 'imgs'))
     # development
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        init()
     app.run(host='0.0.0.0', port=8388, debug=True)
 
     # production
     # from waitress import serve
+    # init()
     # serve(app, host="0.0.0.0", port=8388)
