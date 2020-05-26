@@ -186,22 +186,8 @@ export default {
     init: function () {
       if (this.$route.query.id) {
         this.imageID = this.$route.query.id
-        this.$axios.post(`/api/geturl`, {
-          id: this.imageID
-        }).then(
-          res => {
-            this.imageName = '搜索图片'
-            this.imageUrl = res.data.imgURL
-          },
-          () => {
-            this.imageName = ''
-            this.imageUrl = ''
-            this.imageID = ''
-            this.$router.push({
-              path: "/"
-            })
-          }
-        )
+        this.imageName = '搜索图片'
+        this.imageUrl = `${this.backend}/upload/${this.imageID}`
       }
       console.log(this.$route.query)
       this.size = this.$route.query.size ? this.$route.query.size : "any"
@@ -238,9 +224,8 @@ export default {
       })
     },
     cropSuccess (imgDataUrl, field) {
-      console.log('-------- crop success --------');
-      this.imageUrl = imgDataUrl;
-      console.log(field)
+      console.log('-------- crop success --------')
+      this.imageUrl = imgDataUrl
     },
     /**
      * upload success
@@ -252,8 +237,7 @@ export default {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
       this.imageID = jsonData.id
-      console.log(jsonData);
-      console.log('field: ' + field);
+      this.imageUrl = `${this.backend}/upload/${this.imageID}`
     },
     /**
      * upload fail
@@ -262,9 +246,7 @@ export default {
      * [param] field
      */
     cropUploadFail (status, field) {
-      console.log('-------- upload fail --------');
-      console.log(status);
-      console.log('field: ' + field);
+      console.log('-------- upload fail --------')
       this.imageID = ''
       this.imageUrl = ''
       this.imageName = ''

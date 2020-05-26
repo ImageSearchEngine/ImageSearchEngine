@@ -1,7 +1,7 @@
 <template>
   <div style="width:100%">
     <v-row
-      v-for="n in Math.ceil(imgURLs.length/4) "
+      v-for="n in Math.ceil(imgIDs.length/4) "
       :key="n"
       style="width:100%;margin:0 auto;"
     >
@@ -10,23 +10,23 @@
         :key="nn"
         style="width:20%;margin:0 auto;"
       >
-        <div v-if="(nn-1)+(n-1)*4<imgURLs.length">
+        <div v-if="(nn-1)+(n-1)*4<imgIDs.length">
           <v-dialog
             v-model="dialog"
             width="700px"
           >
             <template v-slot:activator="{ on }">
               <v-img
-                :src="imgURLs[(nn-1)+(n-1)*4]"
+                :src="`${backend}/img/${imgIDs[(nn-1)+(n-1)*4]}`"
                 height="200px"
                 class="touchable"
-                @click="focusImgURL=imgURLs[(nn-1)+(n-1)*4]"
+                @click="focusImgID=imgIDs[(nn-1)+(n-1)*4]"
                 v-on='on'
               ></v-img>
             </template>
             <v-card>
               <v-img
-                :src="imgURLs[(nn-1)+(n-1)*4]"
+                :src="`${backend}/img/${imgIDs[(nn-1)+(n-1)*4]}`"
                 width=100%
               ></v-img>
               <v-card-title class="ma-2">
@@ -34,10 +34,10 @@
               </v-card-title>
               <Waterfall style="width:100%">
                 <WaterfallItem
-                  v-for="(imgURL,idx) in relateImgURLs"
+                  v-for="(imgID,idx) in relateImgIDs"
                   :key="idx"
                 >
-                  <v-img :src="imgURL"></v-img>
+                  <v-img :src="`${backend}/img/${imgID}`"></v-img>
                 </WaterfallItem>
               </Waterfall>
             </v-card>
@@ -80,10 +80,10 @@ export default {
   data () {
     return {
       page: 1,
-      focusImgURL: "",
+      focusImgID: "",
       dialog: false,
-      imgURLs: [],
-      relateImgURLs: [],
+      imgIDs: [],
+      relateImgIDs: [],
       totalPage: 1,
     }
   },
@@ -106,14 +106,14 @@ export default {
     },
     "dialog": function (newDialog) {
       //console.log(newDialog)
-      this.relateImgURLs = []
+      this.relateImgIDs = []
       this.$axios.post('/api/relate', {
-        imgURL: this.focusImgURL,
-        maxsize: 40,
+        img: this.focusImgID,
+        num: 40,
       }).then(
         res => {
           let data = res.data
-          this.relateImgURLs = data.imgURLs
+          this.relateImgIDs = data.imgs
         },
         () => {
         }
@@ -123,14 +123,14 @@ export default {
   },
   methods: {
     init: function () {
-      let queryObj = Object.assign({ page: 0, pagesize: 20 }, this.$route.query)
+      let queryObj = Object.assign({ page: 0, num: 20 }, this.$route.query)
       this.$axios.post('/api/search', queryObj).then(
         res => {
           let data = res.data
 
-          this.totalPage = Math.floor(data.total / data.pagesize) + 1,
-            this.page = queryObj.page ? parseInt(queryObj.page) + 1 : 1,
-            this.imgURLs = data.imgURLs
+          this.totalPage = Math.floor(data.total / data.num) + 1
+          this.page = queryObj.page ? parseInt(queryObj.page) + 1 : 1
+          this.imgIDs = data.imgs
         },
         () => {
           context.error({

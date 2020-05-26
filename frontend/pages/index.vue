@@ -30,7 +30,7 @@
               @click:close="remove()"
             >
               <v-avatar left>
-                <img :src="imageData"></v-avatar>
+                <img :src="imageUrl"></v-avatar>
               {{ data.item }}
             </v-chip>
           </template>
@@ -40,9 +40,7 @@
           :width="500"
           :height="500"
           url="/api/upload"
-          :params="params"
           withCredentials
-          :headers="headers"
           v-model="showDialog"
           @crop-success="cropSuccess"
           @crop-upload-success="cropUploadSuccess"
@@ -67,11 +65,7 @@ export default {
       imageName: "",
       imageID: "",
       showDialog: false,
-      params: {
-      },
-      headers: {
-      },
-      imageData: '' // the datebase64 url of created image
+      imageUrl: ''
     }
   },
   methods: {
@@ -83,7 +77,7 @@ export default {
     },
     remove () {
       this.imageName = ''
-      this.imageData = ''
+      this.imageUrl = ''
       this.imageID = ''
       this.showDialog = false
       this.$refs.inputBox.blur()
@@ -99,9 +93,8 @@ export default {
       }
     },
     cropSuccess (imgDataUrl, field) {
-      console.log('-------- crop success --------');
-      this.imageData = imgDataUrl;
-      console.log('field: ' + field)
+      console.log('-------- crop success --------')
+      this.imageUrl = imgDataUrl
     },
     /**
      * upload success
@@ -113,8 +106,7 @@ export default {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
       this.imageID = jsonData.id
-      console.log(jsonData);
-      console.log('field: ' + field);
+      this.imageUrl = `${this.backend}/upload/${this.imageID}`
     },
     /**
      * upload fail
@@ -123,11 +115,9 @@ export default {
      * [param] field
      */
     cropUploadFail (status, field) {
-      console.log('-------- upload fail --------');
-      console.log(status);
-      console.log('field: ' + field);
+      console.log('-------- upload fail --------')
       this.imageID = ''
-      this.imageData = ''
+      this.imageUrl = ''
       this.imageName = ''
     }
   }

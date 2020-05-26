@@ -1,0 +1,1 @@
+Vue.prototype.backend = 'http://imgse.c-4.me:8388';

@@ -15,6 +15,9 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      { src: '~/main.js' }
     ]
   },
   /*
@@ -48,7 +51,7 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'http://0.0.0.0:8388',
+      target: 'http://imgse.c-4.me:8388',
       autoRewrite: true
     }
   },
