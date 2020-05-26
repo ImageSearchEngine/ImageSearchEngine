@@ -107,6 +107,8 @@ def getUpload(filename):
 
 
 def init():
+    if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
+        os.makedirs(os.path.join(basedir, 'static', 'imgs'))
     if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
         os.makedirs(os.path.join(basedir, 'static', 'uploads'))
     # for filename in imgs:
