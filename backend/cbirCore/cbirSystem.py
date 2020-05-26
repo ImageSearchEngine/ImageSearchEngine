@@ -1,9 +1,12 @@
 from cbirCore.multigrain.lib import get_multigrain
 from cbirCore.multigrain.utils import cuda
 from cbirCore.multigrain.augmentations import get_transforms
+from .image import Image
 import torch
 import numpy as np
 import gc
+import os
+import pickle
 
 
 class CBIRSystem:
@@ -49,25 +52,44 @@ class CBIRSystem:
         self.dataset.append(image)
         self.dataset_loaded = True
 
-    # def load_data(self, data_dir):
-    #     """
-    #     load_data:
-    #         加载预处理好的数据，不用使用load_image了
-    #     images: list of class Image
-    #         检索的所有图片，列表中的每一项都是Image类的派生类
-    #     """
-    #     self.dataset = images
-    #     for image in self.dataset:
-    #         img = self.transform(image.PILObj)
-    #         img = torch.unsqueeze(img, dim=0)
-    #         if torch.cuda.is_available():
-    #             img = cuda(img)
-    #         with torch.no_grad():
-    #             output_dict = self.model(img)
-    #         feature = output_dict['normalized_embedding'].detach().cpu().numpy()[
-    #             0]
-    #         image.feature = feature
-    #     self.dataset_loaded = True
+    def load_data(self, data_dir):
+        """
+        load_data:
+            加载预处理好的数据，不用使用load_image加载单张图片了
+        data_dir:
+            数据加载路径，包含文件data_dir/features.npz 与 data_dir/ids.pkl
+        """
+        assert(os.path.exists(os.path.join(data_dir, 'features.npz'))
+               and os.path.exists(os.path.join(data_dir, 'ids.pkl')))
+        self.dataset = []
+        features = np.load(os.path.join(
+            data_dir, 'features.npz'))['arr_0']
+        with open(os.path.join(data_dir, 'ids.pkl'), 'rb') as f:
+            ids = pickle.load(f)
+        for id, feature in zip(ids, features):
+            image = Image(id)
+            image.feature = feature
+            self.dataset.append(image)
+        self.dataset_loaded = True
+
+    def save_data(self, data_dir):
+        """
+        save_data:
+            保存处理好的数据
+        data_dir:
+            数据存储路径，生成文件data_dir/features.npz 与 data_dir/ids.pkl
+        """
+        assert(len(self.dataset) > 0)
+        assert(self.dataset_loaded)
+        features = []
+        ids = []
+        for image in self.dataset:
+            features.append(image.feature)
+            ids.append(image.ID)
+        np.savez_compressed(os.path.join(
+            data_dir, 'features.npz'), np.array(features))
+        with open(os.path.join(data_dir, 'ids.pkl'), 'wb') as f:
+            pickle.dump(ids, f)
 
     def _loss(self, x1, x2):
         return np.linalg.norm(x1-x2, 2)
