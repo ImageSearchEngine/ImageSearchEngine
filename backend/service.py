@@ -32,17 +32,15 @@ def generateImageName():
 @app.route('/api/search', methods=['POST'])
 def search():
     data = request.get_json()
-    if data.page == None:
-        return jsonify({'code': '1', 'msg': 'page is None'})
-    if data.pagesize == None:
-        data.pagesize = app.config['DEFAULT_PAGESIZE']
+    page = data['page'] if 'page' in data else 0
+    num = data['num'] if 'num' in data else app.config['DEFAULT_PAGESIZE']
     ret = {
         'code': '0',
         'msg': '',
         'total': len(imgs),
-        'page': data.page,
-        'pagesize': data.pagesize,
-        'imgURLs': [f'{app.config["URL"]}/imgs/{x}' for x in imgs[data.page * data.pagesize: min((data.page+1) * data.pagesize, len(imgs))]]
+        'page': page,
+        'num': min(num, len(imgs)-page*num),
+        'imgs': imgs[page*num: min((page+1)*num, len(imgs))]
     }
     return jsonify(ret)
 
@@ -50,21 +48,12 @@ def search():
 @app.route('/api/relate', methods=['POST'])
 def relate():
     data = request.get_json()
-    if data.maxsize == None:
-        data.maxsize = app.config['DEFAULT_PAGESIZE']
-    ret = {
-        'maxsize': 20,
-        'imgURLs': [
-            'http://ise.c-4.me/imgs/1.jpg',
-        ]
-    }
+    num = data['num'] if 'num' in data else app.config['DEFAULT_PAGESIZE']
     ret = {
         'code': '0',
         'msg': '',
-        'total': len(imgs),
-        'page': data.page,
-        'pagesize': data.pagesize,
-        'imgURLs': [f'{app.config["URL"]}/imgs/{x}' for x in imgs[data.page * data.pagesize: min((data.page+1) * data.pagesize, len(imgs))]]
+        'num': min(num, len(imgs)),
+        'imgs': imgs[: min(num, len(imgs))]
     }
     return jsonify(ret)
 
