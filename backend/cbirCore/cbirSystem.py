@@ -59,12 +59,12 @@ class CBIRSystem:
         data_dir:
             数据加载路径，包含文件data_dir/features.npz 与 data_dir/ids.pkl
         """
-        assert(os.path.exists(os.join(data_dir, 'features.npz'))
-               and os.path.exists(os.join(data_dir, 'ids.pkl')))
+        assert(os.path.exists(os.path.join(data_dir, 'features.npz'))
+               and os.path.exists(os.path.join(data_dir, 'ids.pkl')))
         self.dataset = []
         features = np.load(os.path.join(
             data_dir, 'features.npz'))['arr_0']
-        with open(os.path.join(data_dir, 'ids.pkl')) as f:
+        with open(os.path.join(data_dir, 'ids.pkl'), 'rb') as f:
             ids = pickle.load(f)
         for id, feature in zip(ids, features):
             image = Image(id)
@@ -85,10 +85,10 @@ class CBIRSystem:
         ids = []
         for image in self.dataset:
             features.append(image.feature)
-            ids.append(image.id)
+            ids.append(image.ID)
         np.savez_compressed(os.path.join(
             data_dir, 'features.npz'), np.array(features))
-        with open(os.path.join(data_dir, 'ids.pkl')) as f:
+        with open(os.path.join(data_dir, 'ids.pkl'), 'wb') as f:
             pickle.dump(ids, f)
 
     def _loss(self, x1, x2):
