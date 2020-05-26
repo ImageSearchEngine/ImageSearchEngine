@@ -13,7 +13,7 @@ class Image:
         图片对应的ID
     """
 
-    def __init__(self, ID=None, image_dir=None):
+    def __init__(self, image_dir=None, ID=None):
         self.ID = ID
         self.PILObj = None if image_dir == None else open(image_dir)
         self.feature = None

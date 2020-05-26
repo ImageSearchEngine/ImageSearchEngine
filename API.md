@@ -12,7 +12,7 @@
 {
     color: 'ff00ff', // optional
     size: 'large', // optional, [large, small, medium]
-    id: '313hn32g2u32g', // optional, img id
+    img: '313hn32g2u32g', // optional, img id
     page: 0, // optional, default is 0, the result on page 0
     num: 20, // optional, default is 20, return 20 imgs each time
 }
@@ -83,7 +83,7 @@
 {
     code: 0, // status, 0 means normal, other means error
     msg: '', // message
-    id: '43h423dfuifds8f' // uploaded img id
+    img: '43h423dfuifds8f' // uploaded img id
 }
 ```
 

@@ -11,14 +11,14 @@ import random
 import string
 import imghdr
 from PIL import Image
-# from cbirCore.cbirSystem import CBIRSystem
-# from cbirCore.image import Image
+from cbirCore.cbirSystem import CBIRSystem
+from cbirCore.image import Image as CBIRImage
 import config
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config.from_object(config)
-# core = CBIRSystem()
+core = CBIRSystem()
 imgs = []
 
 
@@ -38,13 +38,17 @@ def search():
     data = request.get_json()
     page = data['page'] if 'page' in data else 0
     num = data['num'] if 'num' in data else app.config['DEFAULT_PAGESIZE']
+    # TODO check if all is legal
+    if 'img' not in data:
+        return jsonify({'code': '1', 'msg': 'param[img] is None'})
+    retImg = core.retrieve_image(CBIRImage(os.path.join(basedir, 'static', 'uploads', data['img'])))
     ret = {
         'code': '0',
         'msg': '',
-        'total': len(imgs),
+        'total': len(retImg),
         'page': page,
-        'num': min(num, len(imgs)-page*num),
-        'imgs': imgs[page*num: min((page+1)*num, len(imgs))]
+        'num': min(num, len(retImg)-page*num),
+        'imgs': retImg[page*num: min((page+1)*num, len(retImg))]
     }
     return jsonify(ret)
 
@@ -53,11 +57,15 @@ def search():
 def relate():
     data = request.get_json()
     num = data['num'] if 'num' in data else app.config['DEFAULT_PAGESIZE']
+    # TODO check if all is legal
+    if 'img' not in data:
+        return jsonify({'code': '1', 'msg': 'param[img] is None'})
+    retImg = core.retrieve_image(CBIRImage(os.path.join(basedir, 'static', 'imgs', data['img'])), num)
     ret = {
         'code': '0',
         'msg': '',
-        'num': min(num, len(imgs)),
-        'imgs': imgs[: min(num, len(imgs))]
+        'num': len(retImg),
+        'imgs': [x.ID for x in retImg]
     }
     return jsonify(ret)
 
@@ -76,7 +84,7 @@ def upload():
     ret = {
         'code': '0',
         'msg': '',
-        'id': imgName
+        'img': imgName
     }
     return jsonify(ret)
 
@@ -90,9 +98,12 @@ def getImg(filename):
         img = Image.open(path)
         imgByteArr = io.BytesIO()
         if 's' in request.args:
-            x = int(request.args['s'].split('y')[0])
-            y = int(request.args['s'].split('y')[1])
-            img.thumbnail((x, y))
+            try:
+                x = int(request.args['s'].split('y')[0])
+                y = int(request.args['s'].split('y')[1])
+                img.thumbnail((x, y))
+            except:
+                pass
         img.save(imgByteArr, imghdr.what(path))
         response = make_response(imgByteArr.getvalue())
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
@@ -108,9 +119,12 @@ def getUpload(filename):
         img = Image.open(path)
         imgByteArr = io.BytesIO()
         if 's' in request.args:
-            x = int(request.args['s'].split('y')[0])
-            y = int(request.args['s'].split('y')[1])
-            img.thumbnail((x, y))
+            try:
+                x = int(request.args['s'].split('y')[0])
+                y = int(request.args['s'].split('y')[1])
+                img.thumbnail((x, y))
+            except:
+                pass
         img.save(imgByteArr, imghdr.what(path))
         response = make_response(imgByteArr.getvalue())
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
@@ -132,9 +146,9 @@ def init():
 
 
 def coreInit():
-    # for filename in imgs:
-    #     print(f"core load image: {filename}")
-    #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
+    for filename in imgs[:10]:
+        print(f"core load image: {filename}")
+        core.load_image(CBIRImage(os.path.join(basedir, 'static', 'imgs', filename), filename))
     print(f"core init completed")
 
 
