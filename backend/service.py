@@ -6,9 +6,11 @@ from urllib.parse import quote, unquote, urlencode
 import requests
 import json
 import os
+import io
 import random
 import string
 import imghdr
+from PIL import Image
 # from cbirCore.cbirSystem import CBIRSystem
 # from cbirCore.image import Image
 import config
@@ -77,32 +79,20 @@ def upload():
     return jsonify(ret)
 
 
-@app.route('/thumbnail/<string:filename>', methods=['GET'])
-def getThumbnail(filename):
-    path = os.path.join(basedir, 'static', 'imgs', 'small', filename) 
-    if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
-        return abort(404)
-    else:
-        try:
-            img = open(path, "rb").read()
-        except IOError:
-            return abort(404)
-        response = make_response(img)
-        response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
-        return response
-
-
 @app.route('/img/<string:filename>', methods=['GET'])
 def getImg(filename):
-    path = os.path.join(basedir, 'static', 'imgs', 'origin', filename) 
+    path = os.path.join(basedir, 'static', 'imgs', filename) 
     if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
         return abort(404)
     else:
-        try:
-            img = open(path, "rb").read()
-        except IOError:
-            return abort(404)
-        response = make_response(img)
+        img = Image.open(path)
+        imgByteArr = io.BytesIO()
+        if 's' in request.args:
+            x = int(request.args['s'].split('y')[0])
+            y = int(request.args['s'].split('y')[1])
+            img.thumbnail((x, y))
+        img.save(imgByteArr, imghdr.what(path))
+        response = make_response(imgByteArr.getvalue())
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
         return response
 
@@ -113,20 +103,21 @@ def getUpload(filename):
     if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
         return abort(404)
     else:
-        try:
-            img = open(path, "rb").read()
-        except IOError:
-            return abort(404)
-        response = make_response(img)
+        img = Image.open(path)
+        imgByteArr = io.BytesIO()
+        if 's' in request.args:
+            x = int(request.args['s'].split('y')[0])
+            y = int(request.args['s'].split('y')[1])
+            img.thumbnail((x, y))
+        img.save(imgByteArr, imghdr.what(path))
+        response = make_response(imgByteArr.getvalue())
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
         return response
 
 
 def dirInit():
-    if not os.path.exists(os.path.join(basedir, 'static', 'imgs', 'origin')):
-        os.makedirs(os.path.join(basedir, 'static', 'imgs', 'origin'))
-    if not os.path.exists(os.path.join(basedir, 'static', 'imgs', 'small')):
-        os.makedirs(os.path.join(basedir, 'static', 'imgs', 'small'))
+    if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
+        os.makedirs(os.path.join(basedir, 'static', 'imgs'))
     if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
         os.makedirs(os.path.join(basedir, 'static', 'uploads'))
     print(f"dir init completed")
@@ -134,14 +125,14 @@ def dirInit():
 
 def init():
     global imgs
-    imgs = os.listdir(os.path.join(basedir, 'static', 'imgs', 'origin'))
+    imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
     print(f"init completed")
 
 
 def coreInit():
     # for filename in imgs:
     #     print(f"core load image: {filename}")
-    #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', 'origin', filename)))
+    #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
     print(f"core init completed")
 
 
