@@ -9,14 +9,14 @@ import os
 import random
 import string
 import imghdr
-from cbirCore.cbirSystem import CBIRSystem
-from cbirCore.image import Image
+# from cbirCore.cbirSystem import CBIRSystem
+# from cbirCore.image import Image
 import config
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config.from_object(config)
-core = CBIRSystem()
+# core = CBIRSystem()
 imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
 
 
