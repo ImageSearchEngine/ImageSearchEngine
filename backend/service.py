@@ -6,9 +6,11 @@ from urllib.parse import quote, unquote, urlencode
 import requests
 import json
 import os
+import io
 import random
 import string
 import imghdr
+from PIL import Image
 # from cbirCore.cbirSystem import CBIRSystem
 # from cbirCore.image import Image
 import config
@@ -85,11 +87,14 @@ def getImg(filename):
     if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
         return abort(404)
     else:
-        try:
-            img = open(path, "rb").read()
-        except IOError:
-            return abort(404)
-        response = make_response(img)
+        img = Image.open(path)
+        imgByteArr = io.BytesIO()
+        if 's' in request.args:
+            x = int(request.args['s'].split('y')[0])
+            y = int(request.args['s'].split('y')[1])
+            img.thumbnail((x, y))
+        img.save(imgByteArr, imghdr.what(path))
+        response = make_response(imgByteArr.getvalue())
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
         return response
 
@@ -100,20 +105,27 @@ def getUpload(filename):
     if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
         return abort(404)
     else:
-        try:
-            img = open(path, "rb").read()
-        except IOError:
-            return abort(404)
-        response = make_response(img)
+        img = Image.open(path)
+        imgByteArr = io.BytesIO()
+        if 's' in request.args:
+            x = int(request.args['s'].split('y')[0])
+            y = int(request.args['s'].split('y')[1])
+            img.thumbnail((x, y))
+        img.save(imgByteArr, imghdr.what(path))
+        response = make_response(imgByteArr.getvalue())
         response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
         return response
 
 
-def init():
+def dirInit():
     if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
         os.makedirs(os.path.join(basedir, 'static', 'imgs'))
     if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
         os.makedirs(os.path.join(basedir, 'static', 'uploads'))
+    print(f"dir init completed")
+
+
+def init():
     global imgs
     imgs = os.listdir(os.path.join(basedir, 'static', 'imgs'))
     print(f"init completed")
@@ -127,6 +139,9 @@ def coreInit():
 
 
 if __name__ == '__main__':
+
+    # the first run
+    # dirInit()
 
     init()
 
