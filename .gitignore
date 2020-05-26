@@ -91,4 +91,8 @@ sw.*
 
 __pycache__
 
-backend/static/imgs
+backend/static
+
+.vscode
+
+data/

@@ -10,11 +10,11 @@
 
 ```json
 {
-    color: 'FF00FF', //null表示不约束这一维
-    size: 'large', //large small medium null表示不约束
-    id: '313hn32g2u32g', //图片id，不存在表示不约束
-    page: 0, //以上关键词查询下第k页的结果
-    pagesize: 20, //每页显示20张图片
+    color: 'ff00ff', // optional
+    size: 'large', // optional, [large, small, medium]
+    id: '313hn32g2u32g', // optional, img id
+    page: 0, // optional, default is 0, the result on page 0
+    num: 20, // optional, default is 20, return 20 imgs each time
 }
 ```
 
@@ -22,12 +22,14 @@
 
 ```json
 {
-    total: 119, //总共找到119条结果
-    page: 0, //这是第0页的结果列表
-    pagesize: 20, //每页返回20个
-    imgURLs:[
-        '.....1.png',
-        '.....2.png',
+    code: 0, // status, 0 means normal, other means error
+    msg: '', // message
+    total: 119, // 119 imgs found
+    page: 0, // the result on page 0
+    num: 20, // the number of imgs
+    imgs: [
+        '.....1', // img id
+        '.....2',
     ]
 }
 ```
@@ -42,8 +44,8 @@
 
 ```json
 {
-    imgURL:'....1.png',//查询的图片的url
-    maxsize:20,//返回前20个相关图片
+    img: '.....1', // img id
+    num: 20, // optional, default is 20, return first 20 imgs
 }
 ```
 
@@ -51,10 +53,12 @@
 
 ```json
 {
-    maxsize: 20, //前20个相关图片
-    imgURLs:[
-        '.....1.png',
-        '.....2.png',
+    code: 0, // status, 0 means normal, other means error
+    msg: '', // message
+    num: 20, // the number of imgs
+    imgs: [
+        '.....1', // img id
+        '.....2',
     ]
 }
 ```
@@ -69,7 +73,7 @@
 
 ```json
 {
-	avatar1:(binary data) 
+	img: (binary data) 
 }
 ```
 
@@ -77,29 +81,14 @@
 
 ```json
 {
-    id: 43h423dfuifds8f //图片对应的id
+    code: 0, // status, 0 means normal, other means error
+    msg: '', // message
+    id: '43h423dfuifds8f' // uploaded img id
 }
 ```
 
 ## 获取并显示图片
 
-接口：`/api/geturl`
+接口：`/img/<imgID>` 和 `/upload/<imgID>`
 
-方法：POST
-
-参数：
-
-```json
-{
-    id: 43h423dfuifds8f //图片对应的id
-}
-```
-
-返回：
-
-```json
-{
-    imgURL: 'https://www.baidu.com/img/pc_cc75653cd975aea6d4ba1f59b3697455.png'
-}
-```
-
+方法：GET

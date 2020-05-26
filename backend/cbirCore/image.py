@@ -11,8 +11,8 @@ class Image:
         图像检索系统计算出的图像的特征向量
     """
 
-    def __init__(self):
-        self.PILObj = None
+    def __init__(self, image_dir=None):
+        self.PILObj = None if image_dir == None else open(image_dir)
         self.feature = None
 
     def open(self, image_dir):

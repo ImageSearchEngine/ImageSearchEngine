@@ -15,7 +15,7 @@ class CBIRSystem:
         self.model.eval()
         self.transform = get_transforms(crop=False, need=(
             'val'), backbone='pnasnet5large')['val']
-        self.datasets = []
+        self.dataset = []
         self.ckpt_loaded = self.dataset_loaded = False
 
     def load_checkpoint(self, ckpt_dir):
