@@ -8,6 +8,7 @@ import json
 import os
 import random
 import string
+import imghdr
 from cbirCore.cbirSystem import CBIRSystem
 from cbirCore.image import Image
 import config
@@ -87,41 +88,41 @@ def upload():
     return jsonify(ret)
 
 
-@app.route('/img/<string:filename>', methods=['GET']) # TODO fangyu
+@app.route('/img/<string:filename>', methods=['GET'])
 def getImg(filename):
-    filedir = os.path.join(basedir, 'static', 'imgs')
-    if request.method == 'GET':
-        if filename is None:
-            return abort(404)
-        else:
-            img = open(os.path.join(filedir, filename), "rb").read()
-            response = make_response(img)
-            response.headers['Content-Type'] = 'image/png'
-            return response
+    path = os.path.join(basedir, 'static', 'imgs', filename) 
+    if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
+        return abort(404)
     else:
-        abort(404)
+        try:
+            img = open(path, "rb").read()
+        except IOError:
+            return abort(404)
+        response = make_response(img)
+        response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
+        return response
 
-@app.route('/upload/<string:filename>', methods=['GET']) # TODO fangyu
+@app.route('/upload/<string:filename>', methods=['GET'])
 def getUpload(filename):
-    filedir = os.path.join(basedir, 'static', 'uploads')
-    if request.method == 'GET':
-        if filename is None:
-            return abort(404)
-        else:
-            img = open(os.path.join(filedir, filename), "rb").read()
-            response = make_response(img)
-            response.headers['Content-Type'] = 'image/png'
-            return response
+    path = os.path.join(basedir, 'static', 'uploads', filename) 
+    if filename is None or filename.isalnum() == False or os.path.exists(path) == False or imghdr.what(path) is None:
+        return abort(404)
     else:
-        abort(404)
+        try:
+            img = open(path, "rb").read()
+        except IOError:
+            return abort(404)
+        response = make_response(img)
+        response.headers['Content-Type'] = f'image/{imghdr.what(path)}'
+        return response
 
 
 def init():
     if not os.path.exists(os.path.join(basedir, 'static', 'uploads')):
         os.makedirs(os.path.join(basedir, 'static', 'uploads'))
-    for filename in imgs:
-        print(f"core load image: {filename}")
-        core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
+    # for filename in imgs:
+    #     print(f"core load image: {filename}")
+    #     core.load_image(Image(os.path.join(basedir, 'static', 'imgs', filename)))
     print(f"init completed")
 
 
