@@ -211,7 +211,7 @@ export default {
       })
     },
     search: function () {
-      let queryObj = Object.assign({}, this.$route.query, { 'id': this.imageID })
+      let queryObj = Object.assign({}, this.$route.query, { 'img': this.imageID })
       delete queryObj.page
       this.$router.push({
         path: "/search/",
