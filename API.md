@@ -11,7 +11,7 @@
 ```json
 {
     color: 'ff00ff', // optional
-    size: 'large', // optional, [large, small, medium]
+    size: 'large', // optional, [large, medium, small]
     img: '313hn32g2u32g', // optional, img id
     page: 0, // optional, default is 0, the result on page 0
     num: 20, // optional, default is 20, return 20 imgs each time
