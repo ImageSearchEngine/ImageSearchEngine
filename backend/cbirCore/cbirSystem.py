@@ -29,6 +29,7 @@ class CBIRSystem:
             模型参数的路径，下载地址为https://dl.fbaipublicfiles.com/multigrain/finetuned_models/pnasnet5large-finetune500.pth
         """
         checkpoint = torch.load(ckpt_dir)
+        # checkpoint = torch.load(ckpt_dir, map_location='cpu')
         self.model.load_state_dict(checkpoint['model_state'])
         self.ckpt_loaded = True
 
@@ -67,7 +68,7 @@ class CBIRSystem:
         with open(os.path.join(data_dir, 'ids.pkl'), 'rb') as f:
             ids = pickle.load(f)
         for id, feature in zip(ids, features):
-            image = Image(id)
+            image = Image(ID=id)
             image.feature = feature
             self.dataset.append(image)
         self.dataset_loaded = True

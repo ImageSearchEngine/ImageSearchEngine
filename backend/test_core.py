@@ -10,7 +10,7 @@ system.load_checkpoint('static/pnasnet5large-finetune500.pth')
 
 # image_ids = os.listdir(image_path)
 # for image_id in image_ids:
-#     system.load_image(Image(image_id[:-4], image_path+image_id))
+#     system.load_image(Image(image_path+image_id, image_id[:-4]))
 #     print(image_id)
 # system.save_data('static/')
 
