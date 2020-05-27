@@ -5,7 +5,7 @@
   "author": "fnoi2014xtx",
   "private": true,
   "scripts": {
-    "dev": "nuxt",
+    "dev": "nuxt --hostname 0.0.0.0",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "nuxt generate"

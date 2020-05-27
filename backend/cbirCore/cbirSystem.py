@@ -28,8 +28,8 @@ class CBIRSystem:
         ckpt_dir: str
             模型参数的路径，下载地址为https://dl.fbaipublicfiles.com/multigrain/finetuned_models/pnasnet5large-finetune500.pth
         """
-        checkpoint = torch.load(ckpt_dir)
-        # checkpoint = torch.load(ckpt_dir, map_location='cpu')
+        # checkpoint = torch.load(ckpt_dir)
+        checkpoint = torch.load(ckpt_dir, map_location='cpu')
         self.model.load_state_dict(checkpoint['model_state'])
         self.ckpt_loaded = True
 

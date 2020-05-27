@@ -17,6 +17,7 @@ import config
 basedir = os.path.abspath(os.path.dirname(__file__))
 import numpy as np
 import colorsys
+from math import pi, cos, sin
 
 # the first run
 # if not os.path.exists(os.path.join(basedir, 'static', 'imgs')):
@@ -54,14 +55,21 @@ def filterSize(filename):
         return 'large'
 
 
+def hsv_xyz(a):
+    return np.array([a[1]*a[2]*cos(a[0]*2*pi), a[1]*a[2]*sin(a[0]*2*pi), 1-a[2]])
+
+    
+def hsv_dis(a, b):
+    return np.sum((hsv_xyz(a) - hsv_xyz(b)) ** 2)
+
+
 def filterColor(filename, colorHex):
     r = int(colorHex[1:3], 16) / 255
     g = int(colorHex[3:5], 16) / 255
     b = int(colorHex[5:7], 16) / 255
     c = np.array(colorsys.rgb_to_hsv(r, g, b))
     for x in color[filename]:
-        # print(filename, np.sum((x[:3] - c) ** 2))
-        if np.sum((x[:3] - c) ** 2) < 0.05:
+        if hsv_dis(x[:3], c) < 0.5:
             colorRate[filename] = x[3]
             return True
     return False
