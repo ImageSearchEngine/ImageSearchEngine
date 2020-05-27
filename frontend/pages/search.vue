@@ -134,8 +134,8 @@ export default {
       this.$axios.post('/api/search', queryObj).then(
         res => {
           let data = res.data
-
-          this.totalPage = Math.floor(data.total / data.num) + 1
+          console.log(res.data)
+          this.totalPage = Math.floor((data.total - 1) / data.num) + 1
           this.page = queryObj.page ? parseInt(queryObj.page) + 1 : 1
           this.imgIDs = data.imgs
         },
