@@ -231,7 +231,7 @@ export default {
     cropUploadSuccess (jsonData, field) {
       console.log('-------- upload success --------')
       this.imageName = '搜索图片'
-      this.imageID = jsonData.id
+      this.imageID = jsonData.img
       this.imageUrl = `${backendAddr}/upload/${this.imageID}?s=100y100`
     },
     /**

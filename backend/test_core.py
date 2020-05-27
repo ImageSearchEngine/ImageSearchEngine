@@ -18,3 +18,4 @@ system.load_checkpoint('static/pnasnet5large-finetune500.pth')
 
 system.load_data('static/')
 print(len(system.dataset))
+system.retrieve_image(Image('0000', '../cbir-core/data/jpg/136002.jpg'))
