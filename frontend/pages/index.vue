@@ -55,7 +55,7 @@
 <script>
 import Logo from '~/components/Logo.vue'
 import myUpload from 'vue-image-crop-upload'
-const backendAddr = 'http://imgse.c-4.me:8388'
+const backendAddr = 'http://39.96.36.54:8388'
 export default {
   components: {
     Logo,

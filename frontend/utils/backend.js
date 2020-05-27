@@ -1,4 +1,4 @@
-const backend = 'http://imgse.c-4.me:8388'
+const backend = 'http://39.96.36.54:8388'
 export default {
   backend
 }

@@ -40,7 +40,7 @@
         </div>
         <v-dialog
           v-model="dialog"
-          width="40%"
+          max-width="340"
         >
           <template v-slot:activator="{ on }">
 
@@ -74,14 +74,14 @@
                 </v-col>
               </v-row>
               <v-row v-if="showColorPicker">
+                <v-spacer />
                 <v-col>
                   <v-color-picker
                     class="ma-2"
-                    hide-canvas
-                    width="100%"
                     v-model="color"
                   ></v-color-picker>
                 </v-col>
+                <v-spacer />
               </v-row>
             </v-container>
             <v-divider></v-divider>
@@ -129,7 +129,7 @@
 
 <script>
 import myUpload from 'vue-image-crop-upload'
-const backendAddr = 'http://imgse.c-4.me:8388'
+const backendAddr = 'http://39.96.36.54:8388'
 export default {
   components: {
     "my-upload": myUpload,

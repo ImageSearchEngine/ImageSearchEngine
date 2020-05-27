@@ -51,7 +51,7 @@ export default {
   },
   proxy: {
     '/api/': {
-      target: 'http://imgse.c-4.me:8388',
+      target: 'http://39.96.36.54:8388',
       autoRewrite: true
     }
   },

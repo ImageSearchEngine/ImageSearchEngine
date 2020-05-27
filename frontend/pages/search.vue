@@ -25,10 +25,15 @@
               ></v-img>
             </template>
             <v-card>
-              <v-img
-                :src="`${backend}/img/${focusImgID}?s=500y500`"
-                width=100%
-              ></v-img>
+              <a
+                :href="`${backend}/img/${focusImgID}`"
+                target="_blank"
+              >
+                <v-img
+                  :src="`${backend}/img/${focusImgID}?s=500y500`"
+                  width=100%
+                ></v-img>
+              </a>
               <v-card-title class="ma-2">
                 <span class="headline">Related images</span>
               </v-card-title>
@@ -72,7 +77,7 @@
 const Waterfall = require("vue2-waterfall").Waterfall
 const WaterfallItem = require("vue2-waterfall").WaterfallItem
 const clone = require('clone-deep')
-const backendAddr = 'http://imgse.c-4.me:8388'
+const backendAddr = 'http://39.96.36.54:8388'
 export default {
   components: {
     Waterfall: Waterfall,
