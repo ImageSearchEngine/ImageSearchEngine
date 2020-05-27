@@ -69,7 +69,7 @@ def filterColor(filename, colorHex):
     b = int(colorHex[5:7], 16) / 255
     c = np.array(colorsys.rgb_to_hsv(r, g, b))
     for x in color[filename]:
-        if hsv_dis(x[:3], c) < 0.5:
+        if hsv_dis(x[:3], c) < 0.3:
             colorRate[filename] = x[3]
             return True
     return False
@@ -104,7 +104,7 @@ def search():
         'msg': '',
         'total': len(retImg),
         'page': page,
-        'num': min(num, len(retImg)-page*num),
+        'num': num,
         'imgs': retImg[page*num: min((page+1)*num, len(retImg))]
     }
     return jsonify(ret)
@@ -121,7 +121,7 @@ def relate():
     ret = {
         'code': '0',
         'msg': '',
-        'num': len(retImg),
+        'num': num,
         'imgs': [x.ID for x in retImg]
     }
     return jsonify(ret)
