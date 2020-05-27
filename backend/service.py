@@ -60,7 +60,8 @@ def hsv_xyz(a):
 
     
 def hsv_dis(a, b):
-    return np.sum((hsv_xyz(a) - hsv_xyz(b)) ** 2)
+    dis = np.sqrt(np.sum((hsv_xyz(a) - hsv_xyz(b)) ** 2))
+    return 2 if dis > 0.3 else dis
 
 
 def filterColor(filename, colorHex):
@@ -68,11 +69,14 @@ def filterColor(filename, colorHex):
     g = int(colorHex[3:5], 16) / 255
     b = int(colorHex[5:7], 16) / 255
     c = np.array(colorsys.rgb_to_hsv(r, g, b))
-    for x in color[filename]:
-        if hsv_dis(x[:3], c) < 0.3:
-            colorRate[filename] = x[3]
-            return True
-    return False
+    c[1] = min(c[1], 0.7)
+    c[2] = min(c[2], 0.7)
+    # if c[1] == 1 and c[2] == 1:
+    #     c[1] = c[2] = 0.6
+    # print(c)
+    rate = np.sum([hsv_dis(x[:3], c) * x[3] for x in color[filename]])
+    colorRate[filename] = rate
+    return rate < 1.5
 
 
 def getColorRate(filename):
@@ -96,8 +100,8 @@ def search():
     if 'color' in data:
         retImg = list(filter(lambda x: filterColor(x, data['color']), retImg))
         if 'img' not in data:
-            retImg.sort(key=getColorRate, reverse=True)
-            # print([colorRate[x] for x in retImg[:10]])
+            retImg.sort(key=getColorRate)
+            print([colorRate[x] for x in retImg[:10]])
     
     ret = {
         'code': '0',
