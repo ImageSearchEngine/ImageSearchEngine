@@ -66,7 +66,7 @@
                 <v-col>
                   <v-select
                     class="ma-2"
-                    :items="['any','large','medium','mini']"
+                    :items="['any','large','medium','small']"
                     label="Image size"
                     v-model="size"
                     outlined
