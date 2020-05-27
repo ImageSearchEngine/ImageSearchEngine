@@ -79,6 +79,7 @@
                   <v-color-picker
                     class="ma-2"
                     v-model="color"
+                    hide-mode-switch
                   ></v-color-picker>
                 </v-col>
                 <v-spacer />
@@ -186,7 +187,7 @@ export default {
       }
       console.log(this.$route.query)
       this.size = this.$route.query.size ? this.$route.query.size : "any"
-      this.color = this.$route.query.color ? this.$route.query.color : ""
+      this.color = this.$route.query.color ? this.$route.query.color : "#FFFFFF"
       if (this.color == "")
         this.showColorPicker = false
       else
