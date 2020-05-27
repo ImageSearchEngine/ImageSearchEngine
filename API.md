@@ -26,7 +26,7 @@
     msg: '', // message
     total: 119, // 119 imgs found
     page: 0, // the result on page 0
-    num: 20, // the number of imgs
+    num: 20, // return 20 imgs each time
     imgs: [
         '.....1', // img id
         '.....2',
@@ -55,7 +55,7 @@
 {
     code: 0, // status, 0 means normal, other means error
     msg: '', // message
-    num: 20, // the number of imgs
+    num: 20, // return 20 imgs each time
     imgs: [
         '.....1', // img id
         '.....2',
