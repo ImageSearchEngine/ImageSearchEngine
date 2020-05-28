@@ -188,10 +188,10 @@ export default {
       console.log(this.$route.query)
       this.size = this.$route.query.size ? this.$route.query.size : "any"
       this.color = this.$route.query.color ? this.$route.query.color : "#FFFFFF"
-      if (this.color == "")
-        this.showColorPicker = false
-      else
+      if (this.$route.query.color)
         this.showColorPicker = true
+      else
+        this.showColorPicker = false
     },
     filter: function () {
 
