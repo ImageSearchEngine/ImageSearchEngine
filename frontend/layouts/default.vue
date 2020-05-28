@@ -180,8 +180,8 @@ export default {
       this.$refs.inputBox.blur()
     },
     init: function () {
-      if (this.$route.query.id) {
-        this.imageID = this.$route.query.id
+      if (this.$route.query.img) {
+        this.imageID = this.$route.query.img
         this.imageName = '搜索图片'
         this.imageUrl = `${backendAddr}/upload/${this.imageID}?s=100y100`
       }

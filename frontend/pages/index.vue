@@ -89,7 +89,7 @@ export default {
         this.$router.push({
           path: "/search/",
           query: {
-            'id': this.imageID,
+            'img': this.imageID,
           }
         })
       }
