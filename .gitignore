@@ -91,7 +91,9 @@ sw.*
 
 __pycache__
 
-backend/static
+backend/static/imgs
+backend/static/uploads
+backend/static/pnasnet5large-finetune500.pth
 
 .vscode
 
