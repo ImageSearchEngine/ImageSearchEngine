@@ -329,3 +329,7 @@ Doodle 搜索引擎包含三部分功能，因此针对三部分的功能分别�
 
 - 徐天行：网站前端，图片检索系统，实验报告
 - 郑林楷：网站后端，条件筛选器，实验报告
+
+## 项目代码
+
+项目代码位于 [GitHub 仓库](https://github.com/ImageSearchEngine/ImageSearchEngine)。
